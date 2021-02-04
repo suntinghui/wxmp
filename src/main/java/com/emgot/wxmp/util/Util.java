@@ -11,7 +11,6 @@ public class Util {
 
     public static String genServerURL(HttpServletRequest request, String path) {
         String url = getRootURL(request) + path;
-        System.out.println(url);
         return url;
     }
 }

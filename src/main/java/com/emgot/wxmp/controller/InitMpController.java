@@ -1,5 +1,8 @@
 package com.emgot.wxmp.controller;
 
+import cn.hutool.log.Log;
+import cn.hutool.log.LogFactory;
+import cn.hutool.log.StaticLog;
 import com.alibaba.fastjson.JSON;
 import com.emgot.wxmp.util.Util;
 import me.chanjar.weixin.common.api.WxConsts;
@@ -28,8 +31,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/wxmp")
-public class WXMPRestController {
-
+public class InitMpController {
     @Autowired
     private WxMpService mpService;
 
@@ -38,11 +40,15 @@ public class WXMPRestController {
     @GetMapping("/test")
     public String test() throws WxErrorException {
 
-        //WxMpCurrentAutoReplyInfo info =  this.mpService.getCurrentAutoReplyInfo();
-        //return JSON.toJSONString(info);
-        System.out.println("====");
+        StaticLog.info("test……");
 
-        return this.mpService.getAccessToken();
+        try {
+            String accessToken = this.mpService.getAccessToken();
+            StaticLog.info("accessToken is: {}", accessToken);
+            return accessToken;
+        } catch (Exception e){
+            return "没有取到accessToken";
+        }
     }
 
     // 创建菜单
@@ -53,7 +59,7 @@ public class WXMPRestController {
         WxMenuButton btn1 = new WxMenuButton();
         btn1.setKey("1");
         btn1.setName("绑定用户");
-        btn1.setUrl(Util.genServerURL(request, "/wxmp/bind"));
+        btn1.setUrl(Util.genServerURL(request, "/wxmp/bindUser"));
         btn1.setType("view");
 
         WxMenuButton btn2 = new WxMenuButton();
@@ -85,6 +91,9 @@ public class WXMPRestController {
         wxMenu.setButtons(Arrays.asList(btn1, btn2));
         // 设置菜单
         this.mpService.getMenuService().menuCreate(wxMenu);
+
+        StaticLog.info("菜单创建完成");
+
         return "菜单创建完成";
     }
 
@@ -93,7 +102,7 @@ public class WXMPRestController {
     public void getMediaList() throws WxErrorException {
         WxMpMaterialFileBatchGetResult wxMpMaterialImageBatchGetResult = this.mpService.getMaterialService().materialFileBatchGet(WxConsts.MaterialType.IMAGE, 0, 20);
         List<WxMpMaterialFileBatchGetResult.WxMaterialFileBatchGetNewsItem> list = wxMpMaterialImageBatchGetResult.getItems();
-        System.out.println(JSON.toJSONString(list));
+        StaticLog.info(JSON.toJSONString(list));
     }
 
     // 微信管理后台设置时验证基本信息
@@ -131,7 +140,7 @@ public class WXMPRestController {
                 response.getWriter().write("");
             }
             response.getWriter().write(outMessage.toXml());
-            System.out.println(outMessage.toXml());
+            StaticLog.info(outMessage.toXml());
             return;
         }
 
@@ -156,12 +165,12 @@ public class WXMPRestController {
 
     }
 
+    /*
+    配置路由规则时要按照从细到粗的原则，否则可能消息可能会被提前处理
+    规则的结束必须用Rule.end()或者Rule.next()，否则不会生效
+    msgType  event  eventKey  content
+     */
     private void buildRouter() {
-        /*
-        配置路由规则时要按照从细到粗的原则，否则可能消息可能会被提前处理
-        规则的结束必须用Rule.end()或者Rule.next()，否则不会生效
-        msgType  event  eventKey  content
-         */
         wxMpMessageRouter = new WxMpMessageRouter(this.mpService);
         wxMpMessageRouter
                 .rule()
@@ -181,7 +190,7 @@ public class WXMPRestController {
     private WxMpMessageHandler createSubscribeHandler() {
         String content = "欢迎关注易商惠众\n\n" +
                 "让所有的易商小店做到真正的、长久的\"躺着\"赚钱，是我们的目标。\n\n" +
-                "<a href=\"http://t.emgot.com/wxmp/bind/ \">>>>戳此绑定手机号</a>";
+                "<a href=\"http://t.emgot.com/wxmp/bindUser/ \">>>>戳此绑定手机号</a>";
 
         return new WxMpMessageHandler() {
             @Override
