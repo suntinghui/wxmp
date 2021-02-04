@@ -1,1 +1,1 @@
-# wx-java-mp-demo
+# wxmp

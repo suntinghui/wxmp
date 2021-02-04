@@ -1,4 +1,4 @@
-package com.binarywang.demo.wx.mp;
+package com.emgot.wxmp.conf;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;

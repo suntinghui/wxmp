@@ -1,4 +1,4 @@
-package com.binarywang.demo.wx.mp;
+package com.emgot.wxmp.util;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

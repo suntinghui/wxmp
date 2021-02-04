@@ -8,12 +8,12 @@
         <version>2.3.3.RELEASE</version>
         <relativePath/>
     </parent>
-    <groupId>com.binarywang</groupId>
-    <artifactId>mp-demo</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <groupId>com.emgot</groupId>
+    <artifactId>wxmp</artifactId>
+    <version>1.0</version>
     <name>wxmp</name>
     <packaging>jar</packaging>
-    <description>Demo project for wx mp with spring boot</description>
+    <description>wechat mp and share for EMGOT</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -57,6 +57,8 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.7.25</version>
         </dependency>
+
+
 
 
     </dependencies>

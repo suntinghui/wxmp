@@ -1,6 +1,7 @@
-package com.binarywang.demo.wx.mp;
+package com.emgot.wxmp.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.emgot.wxmp.util.Util;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.menu.WxMenu;
 import me.chanjar.weixin.common.bean.menu.WxMenuButton;
@@ -12,7 +13,6 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialFileBatchGetResult;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
-import me.chanjar.weixin.mp.bean.result.WxMpCurrentAutoReplyInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,12 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import static com.alibaba.fastjson.JSONValidator.Type.Array;
 
 @RestController
 @RequestMapping("/wxmp")
@@ -43,6 +40,7 @@ public class WXMPRestController {
 
         //WxMpCurrentAutoReplyInfo info =  this.mpService.getCurrentAutoReplyInfo();
         //return JSON.toJSONString(info);
+        System.out.println("====");
 
         return this.mpService.getAccessToken();
     }
