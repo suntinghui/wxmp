@@ -1,9 +1,14 @@
 package com.emgot.wxmp.controller;
 
+import cn.hutool.core.text.StrFormatter;
+import cn.hutool.core.util.URLUtil;
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import cn.hutool.log.StaticLog;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.emgot.wxmp.util.Util;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
@@ -12,65 +17,88 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.HashMap;
 
+/*
+本类用于惠众宝分享使用
+1、查询商品详情
+ */
 @Controller
-@RequestMapping("/share")
+@RequestMapping("/wxmp")
 public class ShareController {
+
+    private static final String AppID = "wx8e460eeebd076f72";
+    private static final String AppSecret = "e9c1ec28dd64d5e2c7a3a369f4a9abb8";
 
     @Autowired
     private WxMpService mpService;
 
-    public void queryDetail() {
+    @RequestMapping(value="/queryDetail", method={RequestMethod.GET, RequestMethod.POST })
+    @ResponseBody
+    public String queryDetail(HttpServletRequest request, HttpServletResponse response) {
+        String activityNbr = request.getParameter("activityNbr"); // 分享的商品
+        StaticLog.info("activityNbr:{}", activityNbr);
 
+        String respStr = HttpRequest.post("https://qbhb.emgot.com/qbhbcustomerapi/share/activeDetail")
+                .header("content-type", "application/x-www-form-urlencoded")
+                .form("activityNbr", activityNbr)
+                .execute().body();
+
+        StaticLog.info(respStr);
+        return respStr;
     }
 
-    /**
-     * 该服务用于支持惠众宝中的分享功能
-     *
+    /*
+     用户点击立即参与后执行
+     查询用户openid
+
      */
-    @GetMapping("/auth2")
-    public void auth2(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        StringBuilder redirectUri = new StringBuilder(Util.genServerURL(request, "/wxmp/callback2?"));
-        redirectUri.append("activityNbr=").append(request.getParameter("activityNbr")).append("&")
-                .append("shareCustomerNbr=").append(request.getParameter("shareCustomerNbr")).append("&")
-                .append("mobileNbr=").append(request.getParameter("mobileNbr"));
-        String url = this.mpService.getOAuth2Service().buildAuthorizationUrl(redirectUri.toString(), WxConsts.OAuth2Scope.SNSAPI_BASE, null);
-        // https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx7a24fcce32609ee0&redirect_uri=http%3A%2F%2Fqbhb.emgot.com%2Fcallback&response_type=code&scope=snsapi_userinfo&state=&connect_redirect=1#wechat_redirect
+    @RequestMapping(value = "/wxUserInfo", method={RequestMethod.GET, RequestMethod.POST })
+    public void wxUserInfo(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String activityNbr = request.getParameter("activityNbr");
+        String shareCustomerNbr = request.getParameter("shareCustomerNbr");
+
+        String redirectUri = Util.genServerURL(request, "/wxmp/yaoyao");
+        redirectUri = StrFormatter.format("{}?activityNbr={}&shareCustomerNbr={}", redirectUri, activityNbr, shareCustomerNbr);
+        StaticLog.info(redirectUri);
+
+        String url = StrFormatter.format("https://open.weixin.qq.com/connect/oauth2/authorize?appid={}&redirect_uri={}&response_type=code&scope=snsapi_base&state=123#wechat_redirect", AppID, URLEncoder.encode(redirectUri, "UTF-8"));
+        //String url = this.mpService.getOAuth2Service().buildAuthorizationUrl(redirectUri, WxConsts.OAuth2Scope.SNSAPI_BASE, null);
         StaticLog.info(url);
         response.sendRedirect(url);
     }
 
-    @GetMapping("/callback2")
-    public void callback2(HttpServletRequest request, HttpServletResponse response) throws WxErrorException, IOException {
+    @RequestMapping(value="/yaoyao", method={RequestMethod.GET, RequestMethod.POST })
+    public String yaoyao(HttpServletRequest request, HttpServletResponse response) throws WxErrorException, IOException {
         String code = request.getParameter("code");
-        StaticLog.info("获得Code：" + code);
-        WxOAuth2AccessToken wxOAuth2AccessToken = this.mpService.getOAuth2Service().getAccessToken(code);
-        // 获得用户基本信息
-        WxOAuth2UserInfo userInfo = this.mpService.getOAuth2Service().getUserInfo(wxOAuth2AccessToken, null);
+        StaticLog.info("code:{}",code);
 
-        StaticLog.info(JSON.toJSONString(userInfo));
+        /*
+        WxOAuth2AccessToken wxOAuth2AccessToken = this.mpService.getOAuth2Service().getAccessToken(request.getParameter("code"));
+        HashMap<String, String> map = new HashMap<>();
+        map.put("openid", wxOAuth2AccessToken.getOpenId());
+        */
 
-        // 验证token
-        boolean valid = this.mpService.getOAuth2Service().validateAccessToken(wxOAuth2AccessToken);
-        if (valid) {
-            StaticLog.info("Token验证通过");
-        } else {
-            StaticLog.info("Token验证失败");
-        }
+        String wxUrl = StrFormatter.format("https://api.weixin.qq.com/sns/oauth2/access_token?appid={}&secret={}&code={}&grant_type=authorization_code", AppID, AppSecret, code);
+        String wxRespStr = HttpUtil.get(wxUrl);
+        StaticLog.info(wxRespStr);
+        JSONObject obj = JSON.parseObject(wxRespStr);
 
-        StringBuilder url = new StringBuilder("https://qbhb.emgot.com/emgot/index.html?");
-        url.append("activityNbr=").append(request.getParameter("activityNbr")).append("&")
-                .append("shareCustomerNbr=").append(request.getParameter("shareCustomerNbr")).append("&")
-                .append("mobileNbr=").append(request.getParameter("mobileNbr")).append("&")
-                .append("info=").append(JSON.toJSONString(userInfo));
+        String activityNbr = request.getParameter("activityNbr");
+        String shareCustomerNbr = request.getParameter("shareCustomerNbr");
+        String url = "https://qbhb.emgot.com/qbhbcustomerapi/share/toRegist";
+        url = StrFormatter.format("{}?activityNbr={}&shareCustomerNbr={}&info={}", url, activityNbr, shareCustomerNbr, wxRespStr);
 
-        response.sendRedirect(url.toString());
+        String respStr = HttpUtil.get(url);
+        StaticLog.info("\n{}\n",respStr);
+
+        return respStr;
     }
 
 }

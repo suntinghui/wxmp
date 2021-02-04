@@ -1,0 +1,262 @@
+.cu-color-gray {
+	/* 灰色 */
+	color: $uni-text-color-grey;
+}
+
+.cu-color-dark {
+	color: $uni-text-color;
+}
+
+.cu-color-brown {
+	color: #D6B993;
+}
+
+.cu-font-13 {
+	font-size: 26rpx;
+}
+.cu-font-14 {
+	font-size: 28rpx;
+}
+
+.cu-font-36 {
+	font-size: 72rpx;
+}
+
+.cu-text-bold {
+	font-weight: bold;
+}
+
+.cu-margin-top-10 {
+	margin-top: 10rpx;
+}
+
+.cu-margin-top-20 {
+	margin-top: 20rpx;
+}
+
+.cu-margin-top-30 {
+	margin-top: 30rpx;
+}
+
+.cu-padding-0 {
+	padding: 0;
+}
+
+.cu-text-center {
+	text-align: center;
+}
+
+.tui-scale-small {
+	-webkit-transform: scale(0.9);
+	transform: scale(0.9);
+	-webkit-transform-origin: left center;
+	transform-origin: left center;
+}
+
+.status_bar {
+	/* 状态栏 */
+	height: var(--status-bar-height);
+	width: 100%;
+	position: fixed;
+	background-color: #fff;
+	z-index: 9999;
+}
+
+/* 导航栏 */
+.cu-nav-bar {
+	height: 44px;
+	line-height: 44px;
+	background-color: #fff;
+}
+
+.cu-nav-button-back {
+	font-size: 14px;
+	color: #999;
+	padding-left: 30rpx;
+}
+
+.cu-nav-avatar {
+	width: 22px;
+	height: 22px;
+	margin-right: 10px;
+	margin-top: 12px;
+}
+/* #ifdef MP-WEIXIN */
+.cu-nav-avatar {
+	width: 22px;
+	height: 22px;
+	margin-right: 10px;
+	margin-top: 12px;
+	position: relative;
+	right: 220rpx;
+}
+/* #endif */
+/* 导航栏结束 */
+
+/* 自定义TABBAR */
+.tui-tabbar {
+	width: 100%;
+	height: 100rpx;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	position: relative;
+}
+
+.tui-tabbar-fixed {
+	position: fixed;
+	z-index: 9999;
+	background-color: #fff;
+	left: 0;
+	bottom: 0;
+	padding-bottom: constant(safe-area-inset-bottom);
+	padding-bottom: env(safe-area-inset-bottom);
+	box-sizing: content-box !important;
+}
+
+.tui-tabbar::before {
+	content: ' ';
+	width: 100%;
+	border-top: 1px solid #b2b2b2;
+	position: absolute;
+	top: 0;
+	left: 0;
+	transform: scaleY(0.5) translateZ(0);
+	transform-origin: 0 0;
+	display: block;
+	z-index: 3;
+}
+
+.tui-tabbar-item {
+	height: 100%;
+	flex: 1;
+	display: flex;
+	text-align: center;
+	align-items: center;
+	flex-direction: column;
+	justify-content: space-between;
+	position: relative;
+	padding: 10rpx 0;
+	box-sizing: border-box;
+	z-index: 5;
+}
+
+.tui-icon-box {
+	position: relative;
+}
+
+.tui-tabbar-icon {
+	width: 52rpx;
+	height: 52rpx;
+	display: block;
+}
+
+.tui-unlined::after {
+	height: 0 !important;
+}
+
+.tui-text-scale {
+	font-weight: normal;
+	transform: scale(1);
+	font-size: 25rpx;
+	line-height: 28rpx;
+	transform-origin: center 100%;
+}
+
+
+.cu-tabbar-item-select {
+	color: $uni-color-primary;
+}
+
+/* 自定义TABBAR结束 */
+
+/* 标题 */
+.cu-header {
+	height: 44rpx;
+	line-height: 44rpx;
+	margin-top: 44rpx;
+	margin-bottom: 12rpx;
+}
+
+.cu-header-title {
+	font-size: 34rpx;
+}
+
+.cu-header-more {
+	color: $uni-color-primary;
+	font-size: 26rpx;
+}
+
+/* 标题结束 */
+
+/* 搜索 */
+.tui-searchbox {
+	padding: 30rpx 0;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+}
+
+.tui-search-input {
+	width: 100%;
+	height: 66rpx;
+	border-radius: 35rpx;
+	padding: 0 30rpx;
+	box-sizing: border-box;
+	background: #f2f2f2;
+	display: flex;
+	align-items: center;
+	flex-wrap: nowrap;
+}
+
+.tui-input {
+	flex: 1;
+	color: #333;
+	padding: 0 16rpx;
+	font-size: 28rpx;
+}
+
+.tui-input-plholder {
+	font-size: 28rpx;
+	color: #b2b2b2;
+}
+
+.tui-cancle {
+	color: #888;
+	font-size: 28rpx;
+	padding-left: 30rpx;
+	flex-shrink: 0;
+}
+
+/* 搜索结束 */
+
+/* 白背景 */
+.cu-white-box {
+	background: #ffffff;
+	border-radius: 6px;
+	padding: 40rpx;
+}
+
+.cu-text-amount {
+	align-items: flex-end;
+	color: $uni-text-color;
+	font-weight: bold;
+	font-size: 48rpx;
+
+	.tui-text-scale {
+		color: $uni-text-color;
+		line-height: 48rpx;
+		font-size: 28rpx;
+	}
+}
+
+/* 白背景 */
+/* 黑背景 */
+.cu-black-box {
+	background: #03082A;
+	border-radius: 6px;
+	padding: 40rpx;
+	box-shadow: 0px 8px 16px rgba(50, 50, 71, 0.06), 0px 8px 8px rgba(50, 50, 71, 0.08);
+}
+
+/* 黑背景 */
