@@ -52,6 +52,20 @@
             <version>5.5.7</version>
         </dependency>
 
+        <!--  thymeleaf -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
+        <!--devtools热部署, https://blog.csdn.net/chachapaofan/article/details/88697452-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+            <scope>true</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -59,6 +73,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>
+                </configuration>
             </plugin>
         </plugins>
     </build>
