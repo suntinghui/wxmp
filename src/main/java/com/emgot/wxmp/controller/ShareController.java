@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 
 /*
@@ -105,7 +106,7 @@ public class ShareController {
         String activityNbr = request.getParameter("activityNbr");
         String shareCustomerNbr = request.getParameter("shareCustomerNbr");
         String url = "https://qbhb.emgot.com/qbhbcustomerapi/share/toRegist";
-        url = StrFormatter.format("{}?activityNbr={}&shareCustomerNbr={}&info={}", url, activityNbr, shareCustomerNbr, JSON.toJSONString(map));
+        url = StrFormatter.format("{}?activityNbr={}&shareCustomerNbr={}&info={}", url, activityNbr, shareCustomerNbr, URLEncoder.encode(JSON.toJSONString(map), "UTF-8"));
         StaticLog.info(url);
         response.sendRedirect(url);
     }
