@@ -56,6 +56,8 @@ public class ShareController {
                 modelAndView.addObject("img", StrFormatter.format("https://qbhb.emgot.com/{}", A7100.getString("attachmentPath")));
                 String joinUrl = StrFormatter.format("{}?activityNbr={}&shareCustomerNbr={}", Util.genServerURL(request, "/share/wxUserInfo"), activityNbr, shareCustomerNbr);
                 modelAndView.addObject("join_url", joinUrl);
+                modelAndView.addObject("activityNbr", activityNbr);
+
             } catch (Exception e) {
                 modelAndView.setViewName("error");
             }
