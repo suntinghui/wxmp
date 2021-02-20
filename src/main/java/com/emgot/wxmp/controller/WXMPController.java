@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -57,7 +59,8 @@ public class WXMPController {
     https://github.com/Wechat-Group/WxJava/wiki/MP_%E5%8F%91%E9%80%81%E6%A8%A1%E6%9D%BF%E6%B6%88%E6%81%AF
     ***用于发送模板消息***
      */
-    @GetMapping("/tmsg")
+    @RequestMapping(value="/tmsg", method={RequestMethod.GET, RequestMethod.POST })
+    @ResponseBody
     public void templateMessage(HttpServletRequest request) throws WxErrorException {
         JSONObject jsonObject  = JSON.parseObject(request.getParameter("message"));
 
