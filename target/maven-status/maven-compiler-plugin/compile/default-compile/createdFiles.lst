@@ -2,6 +2,7 @@ com\emgot\wxmp\util\RedirectWithPost.class
 com\emgot\wxmp\util\Util.class
 com\emgot\wxmp\conf\WebMvcConf.class
 com\emgot\wxmp\app\MyApplication.class
+com\emgot\wxmp\controller\JVerifyController.class
 com\emgot\wxmp\controller\ShareController.class
 com\emgot\wxmp\controller\WXMPController.class
 com\emgot\wxmp\controller\InitMpController$1.class

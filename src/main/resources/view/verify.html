@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>易商惠众</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+</head>
+<body>
+
+<div>
+
+    <!-- 这里是页面内容区 -->
+    <div>
+
+
+    </div>
+</div>
+
+<script type="text/javascript" src="https://jverification.jiguang.cn/scripts/1.0.0/jverification-web.min.js"></script>
+
+<script>
+    window.JVerificationInterface.init({
+        appkey: "84af8084d00c7ddd67949c7f",
+        debugMode: true,
+        success: function(data) {
+            //TODO 初始化成功回调
+            console.log(data)
+
+            var isSuccess = window.JVerificationInterface.isInitSuccess();
+            console.log(isSuccess)
+
+            var verifyEnable = window.JVerificationInterface.checkVerifyEnable();
+            if(!verifyEnable){
+                console.log("当前网络环境不支持认证");
+            } else {
+                console.log("当前网络环境支持认证");
+            }
+
+            window.JVerificationInterface.getToken({
+                operater:"CM",
+                success: function(data)  {
+                    //TODO 获取token成功回调
+                    var operater =data.operater;
+                    var token =data.content;
+
+                    alert(JSON.stringify(data))
+
+                }, fail: function(data)  {
+                    //TODO 获取token失败回调
+                    alert(JSON.stringify(data))
+                }
+            })
+        },
+        fail: function(data) {
+            //TODO 初始化失败回调
+            alert("----------")
+        }
+    });
+
+
+
+
+</script>
+
+</body>
+</html>
