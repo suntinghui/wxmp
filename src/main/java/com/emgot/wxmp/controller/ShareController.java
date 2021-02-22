@@ -51,12 +51,15 @@ public class ShareController {
         if (rootObject.get("code").equals("B0000")) {
             try {
                 modelAndView.setViewName("activity_detail");
+
                 JSONObject A7100 = (JSONObject) rootObject.getJSONObject("data").getJSONArray("A7100").get(0);
                 modelAndView.addObject("title", A7100.getString("subjectName"));
                 modelAndView.addObject("img", StrFormatter.format("https://qbhb.emgot.com/{}", A7100.getString("attachmentPath")));
                 String joinUrl = StrFormatter.format("{}?activityNbr={}&shareCustomerNbr={}", Util.genServerURL(request, "/share/wxUserInfo"), activityNbr, shareCustomerNbr);
                 modelAndView.addObject("join_url", joinUrl);
                 modelAndView.addObject("activityNbr", activityNbr);
+                modelAndView.addObject("customerNbr", shareCustomerNbr);
+
 
             } catch (Exception e) {
                 modelAndView.setViewName("error");
