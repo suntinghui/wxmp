@@ -34,48 +34,18 @@ public class ShareController {
     private WxMpService mpService;
 
     @RequestMapping(value="/queryDetail", method={RequestMethod.GET, RequestMethod.POST })
-    public ModelAndView queryDetail(HttpServletRequest request, HttpServletResponse response) {
+    public void queryDetail(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String activityNbr = request.getParameter("activityNbr");
         String shareCustomerNbr = request.getParameter("shareCustomerNbr");
         StaticLog.info("activityNbr:{}, shareCustomerNbr:{}", activityNbr, shareCustomerNbr);
 
-        String respStr = HttpRequest.post("https://qbhb.emgot.com/qbhbcustomerapi/share/activeDetail")
-                .header("content-type", "application/x-www-form-urlencoded")
-                .form("activityNbr", activityNbr)
-                .execute().body();
-        StaticLog.info(respStr);
-
-        ModelAndView modelAndView = new ModelAndView();
-
-        JSONObject rootObject = JSON.parseObject(respStr);
-        if (rootObject.get("code").equals("B0000")) {
-            try {
-                modelAndView.setViewName("activity_detail");
-
-                JSONObject A7100 = (JSONObject) rootObject.getJSONObject("data").getJSONArray("A7100").get(0);
-                modelAndView.addObject("title", A7100.getString("subjectName"));
-                modelAndView.addObject("img", StrFormatter.format("https://qbhb.emgot.com/{}", A7100.getString("attachmentPath")));
-                String joinUrl = StrFormatter.format("{}?activityNbr={}&shareCustomerNbr={}", Util.genServerURL(request, "/share/wxUserInfo"), activityNbr, shareCustomerNbr);
-                modelAndView.addObject("join_url", joinUrl);
-                modelAndView.addObject("activityNbr", activityNbr);
-                modelAndView.addObject("customerNbr", shareCustomerNbr);
-
-
-            } catch (Exception e) {
-                modelAndView.setViewName("error");
-            }
-
-        } else {
-            modelAndView.setViewName("error");
-        }
-
-        return modelAndView;
+        String wxUrl = StrFormatter.format("{}?activityNbr={}&shareCustomerNbr={}", Util.genServerURL(request, "/share/wxUserInfo"), activityNbr, shareCustomerNbr);
+        response.sendRedirect(wxUrl);
     }
 
     /*
      用户点击立即参与后执行
      查询用户openid
-
      */
     @RequestMapping(value = "/wxUserInfo", method={RequestMethod.GET, RequestMethod.POST })
     public void wxUserInfo(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -92,28 +62,58 @@ public class ShareController {
         response.sendRedirect(url);
     }
 
+    // 通过上面的wxUserInfo方法发起调用
     @RequestMapping(value="/wxUserInfo2", method={RequestMethod.GET, RequestMethod.POST })
-    public void wxUserInfo2(HttpServletRequest request, HttpServletResponse response) throws WxErrorException, IOException {
+    public ModelAndView wxUserInfo2(HttpServletRequest request, HttpServletResponse response) throws WxErrorException, IOException {
+        // 取得code
         String code = request.getParameter("code");
         StaticLog.info("code:{}",code);
-
+        // 使用code换得openId
         WxOAuth2AccessToken wxOAuth2AccessToken = this.mpService.getOAuth2Service().getAccessToken(request.getParameter("code"));
-        HashMap<String, String> map = new HashMap<>();
-        map.put("openid", wxOAuth2AccessToken.getOpenId());
-
-        /*
-        String wxUrl = StrFormatter.format("https://api.weixin.qq.com/sns/oauth2/access_token?appid={}&secret={}&code={}&grant_type=authorization_code", AppID, AppSecret, code);
-        String wxRespStr = HttpUtil.get(wxUrl);
-        StaticLog.info(wxRespStr);
-        JSONObject obj = JSON.parseObject(wxRespStr);
-         */
-
+        String openId = wxOAuth2AccessToken.getOpenId();
+        StaticLog.info("openId:{}",openId);
+        // 初始的两个基础参数
         String activityNbr = request.getParameter("activityNbr");
         String shareCustomerNbr = request.getParameter("shareCustomerNbr");
-        String url = "https://qbhb.emgot.com/qbhbcustomerapi/share/toRegist";
-        url = StrFormatter.format("{}?activityNbr={}&shareCustomerNbr={}&info={}", url, activityNbr, shareCustomerNbr, URLEncoder.encode(JSON.toJSONString(map), "UTF-8"));
-        StaticLog.info(url);
-        response.sendRedirect(url);
+
+        // 取得其他信息，标题和图片
+        String respStr = HttpRequest.post("https://qbhb.emgot.com/qbhbcustomerapi/share/activeDetail")
+                .header("content-type", "application/x-www-form-urlencoded")
+                .form("activityNbr", activityNbr)
+                .execute().body();
+        StaticLog.info(respStr);
+
+        ModelAndView modelAndView = new ModelAndView();
+
+        JSONObject rootObject = JSON.parseObject(respStr);
+        if (rootObject.get("code").equals("B0000")) {
+            try {
+                modelAndView.setViewName("activity_detail");
+
+                JSONObject A7100 = (JSONObject) rootObject.getJSONObject("data").getJSONArray("A7100").get(0);
+                modelAndView.addObject("title", A7100.getString("subjectName"));
+                modelAndView.addObject("img", StrFormatter.format("https://qbhb.emgot.com/{}", A7100.getString("attachmentPath")));
+                modelAndView.addObject("activityNbr", activityNbr);
+                modelAndView.addObject("customerNbr", shareCustomerNbr);
+                modelAndView.addObject("openId", openId);
+
+            } catch (Exception e) {
+                modelAndView.setViewName("error");
+            }
+
+        } else {
+            modelAndView.setViewName("error");
+        }
+
+        return modelAndView;
+    }
+
+
+    @RequestMapping(value="/activityTip", method={RequestMethod.GET, RequestMethod.POST })
+    public ModelAndView activityTip(HttpServletRequest request, HttpServletResponse response) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("activity_tip");
+        return modelAndView;
     }
 
 }

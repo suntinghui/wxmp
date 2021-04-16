@@ -26,9 +26,11 @@
             position: fixed;
             bottom: 0;
             width: 100%;
+            z-index: 999;
         }
-        .footer a{
-            margin: 15px;
+        .footer button{
+            width: 95%;
+            margin: 15px auto;
         }
     </style>
 
@@ -37,51 +39,40 @@
 <div class="container">
     <img th:src="${img}" width="100%" >
     <div class="des" th:text="${title}"></div>
+    <div class="footer" id="copyContentCtrl" style="font-size: 1px; z-index: 10; color: #f1f1f1; " ></div>
 </div>
 <div class="footer">
-    <a href="javascript:void(0);" onclick="join()" class="button button-block button-rounded button-primary button-large">立即参与</a>
+    <button id="copyBtn" onclick="join()" data-clipboard-target="#copyContentCtrl" class="button button-block button-rounded button-primary button-large">立即参与</button>
 </div>
+
+<script src="/static/js/clipboard.min.js"></script>
+<script src="/static/js/jquery.min.js"></script>
 
 <script th:inline="javascript">
 
     function join() {
-        // 复制到粘贴板
-        // emgot.com#202102091239525246ca76951#Padfaf322#【酸辣无骨鸡爪】
-        var activityNbr = [[${activityNbr}]]
-        var customerNbr = [[${customerNbr}]]
-        var title = [[${title}]]
-        var strShareLink = "emgot.com#" + activityNbr + "#"+ customerNbr +"#【" + title + "】";
-        copyContentH5(strShareLink);
+        var copyBtn = new ClipboardJS('#copyBtn');
 
-        // 跳转
-        var join_url = [[${join_url}]]
-        window.location.href = join_url;
+        copyBtn.on("success",function(e){
+            // 复制成功
+            e.clearSelection();
+            // 跳转
+            window.location.href = "activityTip";
+        });
+        copyBtn.on("error",function(e){
+            //复制失败；
+        });
     }
 
-    //h5复制文本到剪切板
-    function copyContentH5(content) {
-        var copyDom = document.createElement('div');
-        copyDom.innerText=content;
-        copyDom.style.position='absolute';
-        copyDom.style.top='0px';
-        copyDom.style.right='-9999px';
-        document.body.appendChild(copyDom);
-        //创建选中范围
-        var range = document.createRange();
-        range.selectNode(copyDom);
-        //移除剪切板中内容
-        window.getSelection().removeAllRanges();
-        //添加新的内容到剪切板
-        window.getSelection().addRange(range);
-        //复制
-        var successful = document.execCommand('copy');
-        copyDom.parentNode.removeChild(copyDom);
-        try{
-            var msg = successful ? "successful" : "failed";
-            console.log('Copy command was : ' + msg);
-        } catch(err){
-            console.log('Oops , unable to copy!');
-        }
+
+    window.onload = function () {
+        // 复制到粘贴板
+        // emgot.com#202102091239525246ca76951#Padfaf322#openId
+        var activityNbr = [[${activityNbr}]]
+        var customerNbr = [[${customerNbr}]]
+        var openId = [[${openId}]]
+        var shareLink = "emgot.com#" + activityNbr + "#"+ customerNbr +"#" + openId;
+        $("#copyContentCtrl").text(shareLink);
     }
 
 </script>
