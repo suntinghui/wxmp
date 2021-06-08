@@ -34,10 +34,13 @@
             <artifactId>jedis-lock</artifactId>
             <version>1.0.0</version>
         </dependency>
+
+        <!--
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+        -->
 
         <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
         <dependency>

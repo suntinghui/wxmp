@@ -56,8 +56,10 @@
         copyBtn.on("success",function(e){
             // 复制成功
             e.clearSelection();
+
             // 跳转
-            window.location.href = "activityTip";
+            // window.location.href = "activityTip";
+            window.location.href = "https://qbhb.emgot.com/download/index.jsp";
         });
         copyBtn.on("error",function(e){
             //复制失败；
@@ -71,7 +73,9 @@
         var activityNbr = [[${activityNbr}]]
         var customerNbr = [[${customerNbr}]]
         var openId = [[${openId}]]
-        var shareLink = "emgot.com#" + activityNbr + "#"+ customerNbr +"#" + openId;
+        var merchantNbr = [[${merchantNbr}]]
+        var platformType = [[${platformType}]]
+        var shareLink = "emgot.com#" + activityNbr + "#"+ customerNbr +"#" + openId+ "#" + merchantNbr + "#" + platformType;
         $("#copyContentCtrl").text(shareLink);
     }
 

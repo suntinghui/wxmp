@@ -37,9 +37,12 @@ public class ShareController {
     public void queryDetail(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String activityNbr = request.getParameter("activityNbr");
         String shareCustomerNbr = request.getParameter("shareCustomerNbr");
-        StaticLog.info("activityNbr:{}, shareCustomerNbr:{}", activityNbr, shareCustomerNbr);
+        String merchantNbr = request.getParameter("merchantNbr");
+        String platformType = request.getParameter("platformType");
 
-        String wxUrl = StrFormatter.format("{}?activityNbr={}&shareCustomerNbr={}", Util.genServerURL(request, "/share/wxUserInfo"), activityNbr, shareCustomerNbr);
+        StaticLog.info("activityNbr:{}, shareCustomerNbr:{}, merchantNbr:{}, platformType:{}", activityNbr, shareCustomerNbr, merchantNbr, platformType);
+
+        String wxUrl = StrFormatter.format("{}?activityNbr={}&shareCustomerNbr={}&merchantNbr={}&platformType={}", Util.genServerURL(request, "/share/wxUserInfo"), activityNbr, shareCustomerNbr, merchantNbr, platformType);
         response.sendRedirect(wxUrl);
     }
 
@@ -51,9 +54,11 @@ public class ShareController {
     public void wxUserInfo(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String activityNbr = request.getParameter("activityNbr");
         String shareCustomerNbr = request.getParameter("shareCustomerNbr");
+        String merchantNbr = request.getParameter("merchantNbr");
+        String platformType = request.getParameter("platformType");
 
         String redirectUri = Util.genServerURL(request, "/share/wxUserInfo2");
-        redirectUri = StrFormatter.format("{}?activityNbr={}&shareCustomerNbr={}", redirectUri, activityNbr, shareCustomerNbr);
+        redirectUri = StrFormatter.format("{}?activityNbr={}&shareCustomerNbr={}&merchantNbr={}&platformType={}", redirectUri, activityNbr, shareCustomerNbr,merchantNbr, platformType);
         StaticLog.info(redirectUri);
 
         //String url = StrFormatter.format("https://open.weixin.qq.com/connect/oauth2/authorize?appid={}&redirect_uri={}&response_type=code&scope=snsapi_base&state=123#wechat_redirect", AppID, URLEncoder.encode(redirectUri, "UTF-8"));
@@ -75,11 +80,19 @@ public class ShareController {
         // 初始的两个基础参数
         String activityNbr = request.getParameter("activityNbr");
         String shareCustomerNbr = request.getParameter("shareCustomerNbr");
+        String merchantNbr = request.getParameter("merchantNbr");
+        String platformType = request.getParameter("platformType");
+
+        StaticLog.info("activityNbr:{}, platformType: {}", activityNbr, platformType);
 
         // 取得其他信息，标题和图片
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("activityNbr", activityNbr);
+        paramMap.put("platformType", platformType);
+
         String respStr = HttpRequest.post("https://qbhb.emgot.com/qbhbcustomerapi/share/activeDetail")
                 .header("content-type", "application/x-www-form-urlencoded")
-                .form("activityNbr", activityNbr)
+                .form(paramMap)
                 .execute().body();
         StaticLog.info(respStr);
 
@@ -92,9 +105,16 @@ public class ShareController {
 
                 JSONObject A7100 = (JSONObject) rootObject.getJSONObject("data").getJSONArray("A7100").get(0);
                 modelAndView.addObject("title", A7100.getString("subjectName"));
-                modelAndView.addObject("img", StrFormatter.format("https://qbhb.emgot.com/{}", A7100.getString("attachmentPath")));
+                if (platformType.startsWith("20")) {
+                    modelAndView.addObject("img", StrFormatter.format("https://qbhb.emgot.com/{}", A7100.getString("attachmentPath")));
+                } else {
+                    modelAndView.addObject("img", A7100.getString("attachmentPath"));
+                }
+
                 modelAndView.addObject("activityNbr", activityNbr);
                 modelAndView.addObject("customerNbr", shareCustomerNbr);
+                modelAndView.addObject("merchantNbr", merchantNbr);
+                modelAndView.addObject("platformType", platformType);
                 modelAndView.addObject("openId", openId);
 
             } catch (Exception e) {
