@@ -90,10 +90,11 @@ public class ShareController {
         paramMap.put("activityNbr", activityNbr);
         paramMap.put("platformType", platformType);
 
-        String respStr = HttpRequest.post("https://qbhb.emgot.com/qbhbcustomerapi/share/activeDetail")
+        String respStr = HttpRequest.post("https://su.emgot.com/qbhbcustomerapi/share/activeDetail")
                 .header("content-type", "application/x-www-form-urlencoded")
                 .form(paramMap)
                 .execute().body();
+
         StaticLog.info(respStr);
 
         ModelAndView modelAndView = new ModelAndView();
@@ -106,7 +107,7 @@ public class ShareController {
                 JSONObject A7100 = (JSONObject) rootObject.getJSONObject("data").getJSONArray("A7100").get(0);
                 modelAndView.addObject("title", A7100.getString("subjectName"));
                 if (platformType.startsWith("20")) {
-                    modelAndView.addObject("img", StrFormatter.format("https://qbhb.emgot.com/{}", A7100.getString("attachmentPath")));
+                    modelAndView.addObject("img", StrFormatter.format("https://su.emgot.com/{}", A7100.getString("attachmentPath")));
                 } else {
                     modelAndView.addObject("img", A7100.getString("attachmentPath"));
                 }

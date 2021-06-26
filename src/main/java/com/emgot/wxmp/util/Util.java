@@ -6,11 +6,11 @@ public class Util {
 
     public static String getRootURL(HttpServletRequest request) {
         //return request.getScheme()+"://"+request.getServerName();
-        return "http://"+request.getServerName();
+        return "https://"+request.getServerName();
     }
 
     public static String genServerURL(HttpServletRequest request, String path) {
-        String url = getRootURL(request) + path;
+        String url = getRootURL(request) + "/wx" + path;
         return url;
     }
 }

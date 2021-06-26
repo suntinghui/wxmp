@@ -123,7 +123,7 @@ public class WXMPController {
         HashMap<String, String> map = new HashMap<>();
         map.put("openid", wxOAuth2AccessToken.getOpenId());
 
-        StringBuilder urlSb =  new StringBuilder("https://qbhb.emgot.com/qbhbcustomerapi");
+        StringBuilder urlSb =  new StringBuilder("https://su.emgot.com/qbhbcustomerapi");
         urlSb.append("?c=").append(request.getParameter("referrerNbr"));
         urlSb.append("&info=").append(URLEncoder.encode(JSON.toJSONString(map), "UTF-8"));
         StaticLog.info(urlSb.toString());
@@ -164,7 +164,7 @@ public class WXMPController {
         }
         String info = URLEncoder.encode(JSON.toJSONString(userInfo), "UTF-8");
         StaticLog.info(info);
-        String url = "https://qbhb.emgot.com/qbhbcustomerapi/3?info="+info;
+        String url = "https://su.emgot.com/qbhbcustomerapi/3?info="+info;
         response.sendRedirect(url);
     }
 

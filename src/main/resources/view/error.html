@@ -1,23 +1,39 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<!doctype html>
+<html lang="en">
+
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>易商惠众</title>
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
+    <title>出错了</title>
 
+    <link rel="stylesheet" href="/wx/static/css/style.css">
 </head>
-<body>
 
-<div>
+<body class="bg-white">
 
-    <!-- 这里是页面内容区 -->
-    <div>
+    <div id="appCapsule">
 
-        <p style="margin-top: 100px; margin-left: 50px;">哎呦，出错了~</p>
+        <div class="error-page">
+            <div class="icon-box text-danger mt-5">
+                <ion-icon name="alert-circle"></ion-icon>
+            </div>
+            <h1 class="title" style="display: none;">出错了</h1>
+            <div class="text mb-5">
+                请稍后重试~
+            </div>
+
+        </div>
 
     </div>
-</div>
+
+
+<script type="module" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js"></script>
+
 
 </body>
+
 </html>

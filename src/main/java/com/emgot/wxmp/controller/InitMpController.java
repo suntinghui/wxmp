@@ -190,7 +190,7 @@ public class InitMpController {
     private WxMpMessageHandler createSubscribeHandler() {
         String content = "欢迎关注易商惠众\n\n" +
                 "让所有的易商小店做到真正的、长久的\"躺着\"赚钱，是我们的目标。\n\n" +
-                "<a href=\"http://t.emgot.com/wxmp/bindUser/ \">>>>戳此绑定手机号</a>";
+                "<a href=\"https://su.emgot.com/wx/wxmp/bindUser/ \">>>>戳此绑定手机号</a>";
 
         return new WxMpMessageHandler() {
             @Override

@@ -45,8 +45,13 @@
     <button id="copyBtn" onclick="join()" data-clipboard-target="#copyContentCtrl" class="button button-block button-rounded button-primary button-large">立即参与</button>
 </div>
 
-<script src="/static/js/clipboard.min.js"></script>
-<script src="/static/js/jquery.min.js"></script>
+<!--https://github.com/zenorocha/clipboard.js/wiki/CDN-Providers-->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script>
+<!--<script src="/static/js/clipboard.min.js"></script>-->
+
+<!--https://www.bootcdn.cn/jquery/-->
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<!--<script src="/static/js/jquery.min.js"></script>-->
 
 <script th:inline="javascript">
 
@@ -58,14 +63,16 @@
             e.clearSelection();
 
             // 跳转
-<<<<<<< HEAD
             // window.location.href = "activityTip";
-=======
->>>>>>> origin/master
-            window.location.href = "https://qbhb.emgot.com/download/index.jsp";
+
+            // 注意：uniapp 前端托管不支持JSP
+            //window.location.href = "http://res.emgot.com/hzb/update_app/download/index.jsp";
+
+            window.location.href = "https://a.app.qq.com/o/simple.jsp?pkgname=com.cfastech.yonghu&fromcase=40003";
+
         });
         copyBtn.on("error",function(e){
-            //复制失败；
+            //复制失败
         });
     }
 
@@ -80,6 +87,7 @@
         var platformType = [[${platformType}]]
         var shareLink = "emgot.com#" + activityNbr + "#"+ customerNbr +"#" + openId+ "#" + merchantNbr + "#" + platformType;
         $("#copyContentCtrl").text(shareLink);
+
     }
 
 </script>

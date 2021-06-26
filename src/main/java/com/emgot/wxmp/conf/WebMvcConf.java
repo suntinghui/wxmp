@@ -18,6 +18,7 @@ public class WebMvcConf implements WebMvcConfigurer {
 //        registry.addResourceHandler("/img/**").addResourceLocations("file:/home/tcard/monitor/conf/static/img/");
 //                registry.addResourceHandler("/**").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
 //                super.addResourceHandlers(registry);
     }
 }
