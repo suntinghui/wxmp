@@ -88,6 +88,35 @@ public class WXMPController {
         this.mpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
     }
 
+    @RequestMapping(value="/sendCmdMsg", method={RequestMethod.GET, RequestMethod.POST })
+    @ResponseBody
+    public void sendCmdMsg(HttpServletRequest request) throws WxErrorException {
+        JSONObject jsonObject  = JSON.parseObject(request.getParameter("message"));
+
+        WxMpTemplateMessage templateMessage = WxMpTemplateMessage.builder()
+                .toUser((String)jsonObject.get("openId"))
+                .templateId("5iPoZHnkOSsXiyIZLZqkuvHGrGXCEtK_V8k-D29d5bk")
+                .build();
+
+        String url = (String) jsonObject.get("url");
+        if (!StrUtil.isBlank(url)) {
+            templateMessage.setUrl(url);
+        }
+
+        // https://github.com/Wechat-Group/WxJava/blob/develop/weixin-java-mp/src/test/java/me/chanjar/weixin/mp/api/impl/WxMpTemplateMsgServiceImplTest.java
+
+        templateMessage.addData(new WxMpTemplateData("first", StrUtil.nullToDefault((String) jsonObject.get("first"), ""), "#000000"));
+
+        // 订单编号
+        templateMessage.addData(new WxMpTemplateData("keyword1", (String) jsonObject.get("orderNbr"), "#000000"));
+        // 口令
+        templateMessage.addData(new WxMpTemplateData("keyword2", (String) jsonObject.get("cmd"), "#000000"));
+
+        templateMessage.addData(new WxMpTemplateData("remark", StrUtil.nullToDefault((String) jsonObject.get("remark"), ""), "#000000"));
+
+        this.mpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
+    }
+
     /*
     该方法用于识别易商中的邀请码，示例：http://qbhb.emgot.com/wxmp/r?c=28
 
@@ -151,7 +180,7 @@ public class WXMPController {
         // 获得用户基本信息
         WxOAuth2UserInfo userInfo = this.mpService.getOAuth2Service().getUserInfo(wxOAuth2AccessToken, null);
 
-        StaticLog.info("userInof: {}", JSON.toJSONString(userInfo));
+        StaticLog.info("userInfo: {}", JSON.toJSONString(userInfo));
 
         // 刷新token
         wxOAuth2AccessToken = this.mpService.getOAuth2Service().refreshAccessToken(wxOAuth2AccessToken.getRefreshToken());

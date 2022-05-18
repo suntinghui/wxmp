@@ -1,11 +1,12 @@
 package com.emgot.wxmp.controller;
 
 import cn.hutool.core.text.StrFormatter;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpUtil;
 import cn.hutool.log.StaticLog;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.emgot.wxmp.model.GoodsDetail;
 import com.emgot.wxmp.util.Util;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.oauth2.WxOAuth2AccessToken;
@@ -19,7 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 
 /*
@@ -102,15 +102,25 @@ public class ShareController {
         JSONObject rootObject = JSON.parseObject(respStr);
         if (rootObject.get("code").equals("B0000")) {
             try {
-                modelAndView.setViewName("activity_detail");
+                modelAndView.setViewName("goods_detail");
 
                 JSONObject A7100 = (JSONObject) rootObject.getJSONObject("data").getJSONArray("A7100").get(0);
-                modelAndView.addObject("title", A7100.getString("subjectName"));
-                if (platformType.startsWith("20")) {
-                    modelAndView.addObject("img", StrFormatter.format("https://su.emgot.com/{}", A7100.getString("attachmentPath")));
+
+                GoodsDetail goodsDetail = null;
+                // 包含unionInfo的为联盟电商的标准数据
+                if (A7100.containsKey("unionInfo")) {
+                    goodsDetail = A7100.getObject ("unionInfo", GoodsDetail.class);
                 } else {
-                    modelAndView.addObject("img", A7100.getString("attachmentPath"));
+                    goodsDetail = new GoodsDetail();
+                    goodsDetail.setTitle(A7100.getString("subjectName"));
+                    goodsDetail.setPict_url(StrFormatter.format("https://su.emgot.com/{}", A7100.getString("attachmentPath")));
+
+                    // 以下是为了配合自上架商品能显示
+                    goodsDetail.setShop_title(null);
+                    goodsDetail.setZk_final_price("0.00");
+                    goodsDetail.setCoupon_amount("0");
                 }
+                modelAndView.addObject("detail", goodsDetail);
 
                 modelAndView.addObject("activityNbr", activityNbr);
                 modelAndView.addObject("customerNbr", shareCustomerNbr);
@@ -119,6 +129,7 @@ public class ShareController {
                 modelAndView.addObject("openId", openId);
 
             } catch (Exception e) {
+                e.printStackTrace();
                 modelAndView.setViewName("error");
             }
 
@@ -134,6 +145,18 @@ public class ShareController {
     public ModelAndView activityTip(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("activity_tip");
+        return modelAndView;
+    }
+
+    @RequestMapping(value="/merchantShare", method={RequestMethod.GET, RequestMethod.POST })
+    public ModelAndView merchantShare(HttpServletRequest request, HttpServletResponse response) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("merchant_share");
+
+        String code = request.getParameter("code");
+        String shareCode = StrUtil.format("*#*{}*#*", code);
+        StaticLog.info("shareCode: {}", shareCode);
+        modelAndView.addObject("shareCode", shareCode);
         return modelAndView;
     }
 

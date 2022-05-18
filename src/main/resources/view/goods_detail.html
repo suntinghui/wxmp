@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover"/>
+    <title>商品详情</title>
+    <style>
+        html,
+        body,
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        body {
+            padding-bottom: 80px;
+        }
+
+        .container {
+            padding: 15px;
+        }
+
+        .full-width {
+            width: 100%;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .goods-title {
+            font-size: 16px;
+        }
+
+        /* flex */
+        .d-flex {
+            display: flex;
+        }
+
+        .justify-content-space-between {
+            justify-content: space-between;
+        }
+
+        .align-items-center {
+            align-items: center;
+        }
+
+        .justify-content-center {
+            justify-content: center;
+        }
+
+        /* margin */
+        .mt-15 {
+            margin-top: 15px;
+        }
+
+        .mr-5 {
+            margin-right: 5px;
+        }
+
+        .ml-5 {
+            margin-left: 5px;
+        }
+
+        .p-15 {
+            padding: 15px;
+        }
+
+        .pt-15 {
+            padding-top: 15px;
+        }
+
+        .pb-15 {
+            padding-bottom: 15px;
+        }
+
+        .pr-15 {
+            padding-right: 15px;
+        }
+
+        .pl-15 {
+            padding-left: 15px;
+        }
+
+        /* color */
+        .text-muted {
+            color: #333;
+        }
+
+        .text-danger {
+            color: #c00;
+        }
+
+        .text-gray {
+            color: #666666;
+        }
+
+        .line-through {
+            text-decoration:line-through
+        }
+
+        /* text */
+        .text-lg {
+            font-size: 180%;
+        }
+
+        /* layout */
+        .icon-coupon {
+            background: #c00;
+            color: #fff;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .btn-join {
+            position: fixed;
+            width: 100%;
+            bottom: 0px;
+            background-color: #FFF;
+            border-top: 1px solid #f1f1f1;
+        }
+
+        /* btn */
+        .btn {
+            background: #4899EF;
+            padding: 12px;
+            border: none;
+            color: #fff;
+            border-radius: 4px;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="goods-img"><img th:src="${detail.pict_url}" class="full-width" alt=""></div>
+<h3 class="goods-title pl-15 pr-15 pt-15" th:text="${detail.title}"></h3>
+
+<div class="container" th:style="${detail.shop_title==null} ? 'display: none' : ''">
+    <div class="d-flex justify-content-space-between text-muted">
+        <div class="d-flex align-items-center">
+            <img th:src="${detail.shop_logo}" width="14" class="mr-5">
+            <span th:text="${detail.shop_title}"></span>
+        </div>
+        <div th:text="'月销 '+${detail.volume}"></div>
+    </div>
+    <div class="d-flex justify-content-space-between align-items-center mt-15 text-danger">
+        <div>
+            券后 <span class="text-lg"
+                    th:text="${#numbers.formatDecimal(detail.zk_final_price,1,2)} - ${#numbers.formatDecimal(detail.coupon_amount,1,2)}">元</span>
+            <span class="text-gray line-through ml-5" th:text="'原价'+${detail.zk_final_price}"></span>
+        </div>
+        <div th:style="${detail.coupon_amount == '0'} ? 'display: none' : ''" >
+            <span class="icon-coupon" th:text="'券'+${detail.coupon_amount}+'元'"></span>
+        </div>
+    </div>
+
+    <div id="copyContentCtrl" style="font-size: 1px; z-index: 10; color: #fff; "></div>
+
+</div>
+<div class="btn-join p-15">
+    <button id="copyBtn" onclick="join()" data-clipboard-target="#copyContentCtrl" class="btn btn-block">立即参与</button>
+</div>
+
+<script th:inline="javascript">
+    function join() {
+        var copyBtn = new ClipboardJS('#copyBtn');
+
+        copyBtn.on("success", function (e) {
+            // 复制成功
+            e.clearSelection();
+
+            // 跳转
+            // window.location.href = "activityTip";
+
+            // 注意：uniapp 前端托管不支持JSP
+            //window.location.href = "http://res.emgot.com/hzb/update_app/download/index.jsp";
+            window.location.href = "https://a.app.qq.com/o/simple.jsp?pkgname=com.cfastech.yonghu&fromcase=40003";
+
+        });
+        copyBtn.on("error", function (e) {
+            //复制失败
+            //alert("复制失败")
+        });
+    }
+
+    window.onload = function () {
+        // 复制到粘贴板
+        // emgot.com#202102091239525246ca76951#Padfaf322#openId
+        var activityNbr = [[${activityNbr}]]
+        var customerNbr = [[${customerNbr}]]
+        var openId = [[${openId}]]
+        var merchantNbr = [[${merchantNbr}]]
+        var platformType = [[${platformType}]]
+        var shareLink = "emgot.com#" + activityNbr + "#" + customerNbr + "#" + openId + "#" + merchantNbr + "#" + platformType;
+        // $("#copyContentCtrl").text(shareLink); // android可以，iOS无法赋值
+        document.getElementById("#copyContentCtrl").text(shareLink);
+    }
+
+</script>
+
+<script src="http://cdn.emgot.com/comm/js/clipboard.min.js"></script>
+<script src="http://cdn.emgot.com/comm/js/jquery.min.js"></script>
+
+</body>
+</html>

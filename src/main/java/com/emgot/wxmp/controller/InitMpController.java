@@ -16,6 +16,7 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialFileBatchGetResult;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutNewsMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,10 +59,11 @@ public class InitMpController {
 
         WxMenuButton btn1 = new WxMenuButton();
         btn1.setKey("1");
-        btn1.setName("绑定用户");
+        btn1.setName("账户");
         btn1.setUrl(Util.genServerURL(request, "/wxmp/bindUser"));
         btn1.setType("view");
 
+        /////////////////////////////
         WxMenuButton btn2 = new WxMenuButton();
         btn2.setKey("2");
         btn2.setName("下载应用");
@@ -88,7 +90,30 @@ public class InitMpController {
 
         btn2.setSubButtons(Arrays.asList(btn21, btn22) );
 
-        wxMenu.setButtons(Arrays.asList(btn1, btn2));
+        /////////////////////////////
+
+        WxMenuButton btn3 = new WxMenuButton();
+        btn3.setKey("3");
+        btn3.setName("口令红包");
+
+        WxMenuButton btn31 = new WxMenuButton();
+        btn31.setKey("31");
+        btn31.setName("领取红包");
+        btn31.setUrl("https://su.emgot.com/getBonus.html");
+        btn31.setType("view");
+
+        WxMenuButton btn32 = new WxMenuButton();
+        btn32.setKey("32");
+        btn32.setName("领取步骤");
+        btn32.setUrl("https://mp.weixin.qq.com/s/WFkboW1tlATFW1LaMcrK_Q");
+        btn32.setType("view");
+
+        btn3.setSubButtons(Arrays.asList(btn31, btn32) );
+
+        /////////////////////////////
+
+
+        wxMenu.setButtons(Arrays.asList(btn1, btn2, btn3));
         // 设置菜单
         this.mpService.getMenuService().menuCreate(wxMenu);
 
@@ -173,6 +198,7 @@ public class InitMpController {
     private void buildRouter() {
         wxMpMessageRouter = new WxMpMessageRouter(this.mpService);
         wxMpMessageRouter
+                // 用户关注公众号的响应
                 .rule()
                 .async(false)
                 .msgType(WxConsts.XmlMsgType.EVENT)
@@ -180,17 +206,27 @@ public class InitMpController {
                 .handler(this.createSubscribeHandler())
                 .end()
 
+                // 发送关键词"省钱"的响应
+                .rule()
+                .msgType(WxConsts.XmlMsgType.TEXT)
+                .async(false)
+                .content("省钱")
+                .handler(this.createHandler1())
+                .end()
+
+                // 其他动作忽略
                 .rule()
                 .async(false)
                 .handler(this.createDefaultHandler()) // 匹配任意内容
                 .end();
     }
 
-    // 关注handler
+    // 用户关注公众号的响应
     private WxMpMessageHandler createSubscribeHandler() {
         String content = "欢迎关注易商惠众\n\n" +
-                "让所有的易商小店做到真正的、长久的\"躺着\"赚钱，是我们的目标。\n\n" +
-                "<a href=\"https://su.emgot.com/wx/wxmp/bindUser/ \">>>>戳此绑定手机号</a>";
+                "网购下单[礼物]单单省[强]\n\n" +
+                "分享好物[庆祝]笔笔赚[强]\n\n" +
+                "<a href=\"https://su.emgot.com/wx/wxmp/bindUser/ \">>>>戳此绑定手机号，及时接收【收益&红包】发放通知。</a>";
 
         return new WxMpMessageHandler() {
             @Override
@@ -198,6 +234,26 @@ public class InitMpController {
                 return WxMpXmlOutMessage
                         .TEXT()
                         .content(content)
+                        .fromUser(wxMessage.getToUser())
+                        .toUser(wxMessage.getFromUser())
+                        .build();
+            }
+        };
+    }
+
+    // 用户发送关键词"省钱"的响应
+    private WxMpMessageHandler createHandler1() {
+        WxMpXmlOutNewsMessage.Item item = new WxMpXmlOutNewsMessage.Item();
+        item.setDescription("学会这一招，一年网购少花3600元！");
+        item.setPicUrl("https://mmbiz.qpic.cn/mmbiz_png/fujSZJBmrictFjnNFL7kBatNFOtKvyN1lXEhxd89hlibAXibFnkscpicqINAJZSKAL2DYvsiaJXzM5eXlSZkkFwnI6A/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1");
+        item.setTitle("一年网购花不少，手把手教你网购更省钱！");
+        item.setUrl("https://mp.weixin.qq.com/s/Z0WpI70fm2qwoHUAE-Ys_g");
+
+        return new WxMpMessageHandler() {
+            @Override
+            public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) throws WxErrorException {
+                return WxMpXmlOutMessage.NEWS()
+                        .addArticle(item)
                         .fromUser(wxMessage.getToUser())
                         .toUser(wxMessage.getFromUser())
                         .build();
