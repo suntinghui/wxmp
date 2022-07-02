@@ -1,10 +1,8 @@
 package com.emgot.wxmp.controller;
 
-import cn.hutool.log.Log;
-import cn.hutool.log.LogFactory;
 import cn.hutool.log.StaticLog;
 import com.alibaba.fastjson.JSON;
-import com.emgot.wxmp.util.Util;
+import com.emgot.wxmp.util.AppUtils;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.menu.WxMenu;
 import me.chanjar.weixin.common.bean.menu.WxMenuButton;
@@ -60,7 +58,7 @@ public class InitMpController {
         WxMenuButton btn1 = new WxMenuButton();
         btn1.setKey("1");
         btn1.setName("账户");
-        btn1.setUrl(Util.genServerURL(request, "/wxmp/bindUser"));
+        btn1.setUrl(AppUtils.genServerURL(request, "/wxmp/bindUser"));
         btn1.setType("view");
 
         /////////////////////////////
@@ -138,6 +136,10 @@ public class InitMpController {
         String msgTimestamp = request.getParameter("timestamp");
         String msgNonce = request.getParameter("nonce");
 
+        StaticLog.info("msgSignature: {}", msgSignature);
+        StaticLog.info("msgTimestamp: {}", msgTimestamp);
+        StaticLog.info("msgNonce: {}", msgNonce);
+
         if (!this.mpService.checkSignature(msgTimestamp,msgNonce,msgSignature)) {
             response.getWriter().println("非法请求");
             return;
@@ -152,7 +154,6 @@ public class InitMpController {
 
         // 创建Router
         this.buildRouter();
-
 
         String encryptType = StringUtils.isBlank(request.getParameter("encrypt_type")) ? "raw" : request.getParameter("encrypt_type");
 

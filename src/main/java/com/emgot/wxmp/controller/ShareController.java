@@ -7,7 +7,7 @@ import cn.hutool.log.StaticLog;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.emgot.wxmp.model.GoodsDetail;
-import com.emgot.wxmp.util.Util;
+import com.emgot.wxmp.util.AppUtils;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.oauth2.WxOAuth2AccessToken;
 import me.chanjar.weixin.common.error.WxErrorException;
@@ -42,7 +42,7 @@ public class ShareController {
 
         StaticLog.info("activityNbr:{}, shareCustomerNbr:{}, merchantNbr:{}, platformType:{}", activityNbr, shareCustomerNbr, merchantNbr, platformType);
 
-        String wxUrl = StrFormatter.format("{}?activityNbr={}&shareCustomerNbr={}&merchantNbr={}&platformType={}", Util.genServerURL(request, "/share/wxUserInfo"), activityNbr, shareCustomerNbr, merchantNbr, platformType);
+        String wxUrl = StrFormatter.format("{}?activityNbr={}&shareCustomerNbr={}&merchantNbr={}&platformType={}", AppUtils.genServerURL(request, "/share/wxUserInfo"), activityNbr, shareCustomerNbr, merchantNbr, platformType);
         response.sendRedirect(wxUrl);
     }
 
@@ -57,7 +57,7 @@ public class ShareController {
         String merchantNbr = request.getParameter("merchantNbr");
         String platformType = request.getParameter("platformType");
 
-        String redirectUri = Util.genServerURL(request, "/share/wxUserInfo2");
+        String redirectUri = AppUtils.genServerURL(request, "/share/wxUserInfo2");
         redirectUri = StrFormatter.format("{}?activityNbr={}&shareCustomerNbr={}&merchantNbr={}&platformType={}", redirectUri, activityNbr, shareCustomerNbr,merchantNbr, platformType);
         StaticLog.info(redirectUri);
 
@@ -110,6 +110,7 @@ public class ShareController {
                 // 包含unionInfo的为联盟电商的标准数据
                 if (A7100.containsKey("unionInfo")) {
                     goodsDetail = A7100.getObject ("unionInfo", GoodsDetail.class);
+
                 } else {
                     goodsDetail = new GoodsDetail();
                     goodsDetail.setTitle(A7100.getString("subjectName"));
@@ -124,9 +125,13 @@ public class ShareController {
 
                 modelAndView.addObject("activityNbr", activityNbr);
                 modelAndView.addObject("customerNbr", shareCustomerNbr);
+                modelAndView.addObject("openId", openId);
                 modelAndView.addObject("merchantNbr", merchantNbr);
                 modelAndView.addObject("platformType", platformType);
-                modelAndView.addObject("openId", openId);
+
+                String shareLink = StrUtil.format("emgot.com#{}#{}#{}#{}#{}", activityNbr, shareCustomerNbr, openId, merchantNbr, platformType);
+                StaticLog.info(shareLink);
+                modelAndView.addObject("shareLink", shareLink);
 
             } catch (Exception e) {
                 e.printStackTrace();

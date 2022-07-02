@@ -24,10 +24,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
+        <!-- https://gitee.com/binary/weixin-java-tools -->
         <dependency>
             <groupId>com.github.binarywang</groupId>
             <artifactId>wx-java-mp-spring-boot-starter</artifactId>
-            <version>4.0.0</version>
+            <version>4.3.0</version>
         </dependency>
         <dependency>
             <groupId>com.github.jedis-lock</groupId>

@@ -2,7 +2,7 @@ package com.emgot.wxmp.util;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class Util {
+public class AppUtils {
 
     public static String getRootURL(HttpServletRequest request) {
         //return request.getScheme()+"://"+request.getServerName();

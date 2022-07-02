@@ -15,6 +15,9 @@ public class GoodsDetail {
     private String shop_logo;
     private String reserve_price;
 
+    private String imgs; // 轮播图
+    private String detail_pics; // 商品详情图
+
     public String getTitle() {
         return title;
     }
@@ -106,6 +109,8 @@ public class GoodsDetail {
             shop_logo = "/wx/static/image/pf-pdd.png";
         } else if (this.shop_type.equals("jd")) {
             shop_logo = "/wx/static/image/pf-jd.png";
+        } else if (this.shop_type.equals("wph")) {
+            shop_logo = "/wx/static/image/pf-wph.png";
         } else {
             shop_logo = "/wx/static/image/pf-tb.png";
         }
@@ -117,5 +122,21 @@ public class GoodsDetail {
 
     public void setReserve_price(String reserve_price) {
         this.reserve_price = reserve_price;
+    }
+
+    public String getImgs() {
+        return imgs;
+    }
+
+    public void setImgs(String imgs) {
+        this.imgs = imgs;
+    }
+
+    public String getDetail_pics() {
+        return detail_pics;
+    }
+
+    public void setDetail_pics(String detail_pics) {
+        this.detail_pics = detail_pics;
     }
 }

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta name="viewport"
+		  content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover"/>
+	<title>用户验证</title>
+	<style>
+		html,
+		body,
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-size: 14px;
+		}
+
+		body {
+			padding-bottom: 80px;
+		}
+
+		.container {
+			padding: 15px;
+		}
+
+		.full-width {
+			width: 100%;
+		}
+
+		.text-center {
+			text-align: center;
+		}
+
+		.goods-title {
+			font-size: 16px;
+		}
+
+		/* flex */
+		.d-flex {
+			display: flex;
+		}
+
+		.justify-content-space-between {
+			justify-content: space-between;
+		}
+
+		.align-items-center {
+			align-items: center;
+		}
+
+		.justify-content-center {
+			justify-content: center;
+		}
+
+		/* margin */
+		.mt-15 {
+			margin-top: 15px;
+		}
+
+		.mr-5 {
+			margin-right: 5px;
+		}
+
+		.ml-5 {
+			margin-left: 5px;
+		}
+
+		.p-15 {
+			padding: 15px;
+		}
+
+		.pt-15 {
+			padding-top: 15px;
+		}
+
+		.pb-15 {
+			padding-bottom: 15px;
+		}
+
+		.pr-15 {
+			padding-right: 15px;
+		}
+
+		.pl-15 {
+			padding-left: 15px;
+		}
+
+		/* color */
+		.text-muted {
+			color: #333;
+		}
+
+		.text-danger {
+			color: #c00;
+		}
+
+		.text-gray {
+			color: #666666;
+		}
+
+		.line-through {
+			text-decoration:line-through
+		}
+
+		/* text */
+		.text-lg {
+			font-size: 180%;
+		}
+
+		/* layout */
+		.icon-coupon {
+			background: #c00;
+			color: #fff;
+			padding: 3px 6px;
+			border-radius: 4px;
+		}
+
+		.btn-join {
+			position: fixed;
+			width: 100%;
+			bottom: 0px;
+			background-color: #FFF;
+			border-top: 1px solid #f1f1f1;
+		}
+
+		/* btn */
+		.btn {
+			background: #4899EF;
+			padding: 12px;
+			border: none;
+			color: #fff;
+			border-radius: 4px;
+		}
+
+		.btn-block {
+			width: 100%;
+		}
+	</style>
+</head>
+<body>
+
+<h3 class="goods-title pl-15 pr-15 pt-15" th:text="'商户号: ' + ${merCode}"></h3>
+<h3 class="goods-title pl-15 pr-15 pt-15" th:text="'openId: ' + ${openId}"></h3>
+<h3 class="goods-title pl-15 pr-15 pt-15" th:text="'unionId: ' + ${unionId}"></h3>
+
+<wx-open-launch-app
+		id="launch-btn"
+		appid="wx38c18686b1e03217"
+		extinfo="yaoyao"
+>
+	<script type="text/wxtag-template">
+		<style>.btn { padding: 12px }</style>
+		<button class="btn">App内查看</button>
+	</script>
+</wx-open-launch-app>
+
+<script>
+	var btn = document.getElementById('launch-btn');
+	// launch事件是用户点击跳转按钮并对确认弹窗进行操作后触发
+	btn.addEventListener('launch', function (e) {
+		console.log('success', e.detail);
+	});
+
+	// error事件是用户点击跳转按钮后出现错误。这里可以处理点击按钮失败后，跳转到应用市场或其他下载页面。
+	btn.addEventListener('error', function (e) {
+		console.log('fail', e.detail);
+	});
+</script>
+
+
+<script th:inline="javascript">
+
+	window.onload = function() {
+		var wx_invite_url = location.href.split('#')[0]; //获取当前网页的url ！！！！
+		console.log("url",wx_invite_url);
+
+		$.get("getSign",{url:wx_invite_url},function(data){
+
+			wx.config({
+				// 开启调试模式,调用的所有 api 的返回值会在客户端 alert 出来，若要查看传入的参数，可以在 pc 端打开，参数信息会通过 log 打出，仅在 pc 端时才会打印
+				debug: false,
+				appId: data.appId, // 必填，公众号的唯一标识
+				timestamp: data.timestamp, // 必填，生成签名的时间戳
+				nonceStr: data.nonceStr, // 必填，生成签名的随机串
+				signature: data.signature,// 必填，签名
+				jsApiList: [
+					'onMenuShareTimeline', // 分享给好友
+					'onMenuShareAppMessage', // 分享到朋友圈
+				], // 必填，需要使用的JS接口列表
+				openTagList: ['wx-open-launch-app'] // 可选，需要使用的开放标签列表，例如['wx-open-launch-app']
+			});
+
+			wx.error(function(res){
+				console.log("error", JSON.stringify(res));
+				alert(res);
+				// config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+			});
+		});
+	}
+
+</script>
+
+
+
+<script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+</body>
+</html>

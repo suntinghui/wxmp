@@ -1,9 +1,11 @@
 /Users/tinghuisun/Documents/Project/JavaEE/wxmp/src/main/java/com/emgot/wxmp/controller/WXMPController.java
+/Users/tinghuisun/Documents/Project/JavaEE/wxmp/src/main/java/com/emgot/wxmp/controller/AuthController.java
+/Users/tinghuisun/Documents/Project/JavaEE/wxmp/src/main/java/com/emgot/wxmp/util/JsUtils.java
 /Users/tinghuisun/Documents/Project/JavaEE/wxmp/src/main/java/com/emgot/wxmp/model/GoodsDetail.java
 /Users/tinghuisun/Documents/Project/JavaEE/wxmp/src/main/java/com/emgot/wxmp/util/Test.java
 /Users/tinghuisun/Documents/Project/JavaEE/wxmp/src/main/java/com/emgot/wxmp/controller/JVerifyController.java
 /Users/tinghuisun/Documents/Project/JavaEE/wxmp/src/main/java/com/emgot/wxmp/conf/WebMvcConf.java
 /Users/tinghuisun/Documents/Project/JavaEE/wxmp/src/main/java/com/emgot/wxmp/app/MyApplication.java
-/Users/tinghuisun/Documents/Project/JavaEE/wxmp/src/main/java/com/emgot/wxmp/util/Util.java
+/Users/tinghuisun/Documents/Project/JavaEE/wxmp/src/main/java/com/emgot/wxmp/util/AppUtils.java
 /Users/tinghuisun/Documents/Project/JavaEE/wxmp/src/main/java/com/emgot/wxmp/controller/InitMpController.java
 /Users/tinghuisun/Documents/Project/JavaEE/wxmp/src/main/java/com/emgot/wxmp/controller/ShareController.java

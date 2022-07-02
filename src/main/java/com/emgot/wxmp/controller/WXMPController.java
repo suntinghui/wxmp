@@ -2,12 +2,10 @@ package com.emgot.wxmp.controller;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.log.Log;
-import cn.hutool.log.LogFactory;
 import cn.hutool.log.StaticLog;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.emgot.wxmp.util.Util;
+import com.emgot.wxmp.util.AppUtils;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 import me.chanjar.weixin.common.bean.oauth2.WxOAuth2AccessToken;
@@ -127,7 +125,7 @@ public class WXMPController {
     @RequestMapping("/r")
     public void ysInviteCode(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String referrerNbr = request.getParameter("c");
-        String redirectUri = Util.genServerURL(request, "/wxmp/ysInviteCode2")+"?referrerNbr="+referrerNbr;
+        String redirectUri = AppUtils.genServerURL(request, "/wxmp/ysInviteCode2")+"?referrerNbr="+referrerNbr;
         String url = this.mpService.getOAuth2Service().buildAuthorizationUrl(redirectUri, WxConsts.OAuth2Scope.SNSAPI_BASE, null);
         response.sendRedirect(url);
     }
@@ -167,7 +165,7 @@ public class WXMPController {
      */
     @GetMapping("/bindUser")
     public void bindUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String redirectUri = Util.genServerURL(request, "/wxmp/bindUser2");
+        String redirectUri = AppUtils.genServerURL(request, "/wxmp/bindUser2");
         String url = this.mpService.getOAuth2Service().buildAuthorizationUrl(redirectUri, WxConsts.OAuth2Scope.SNSAPI_USERINFO, null);
         // https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx7a24fcce32609ee0&redirect_uri=http%3A%2F%2Fqbhb.emgot.com%2Fcallback&response_type=code&scope=snsapi_userinfo&state=&connect_redirect=1#wechat_redirect
         StaticLog.info("bindUser url : {}", url);
