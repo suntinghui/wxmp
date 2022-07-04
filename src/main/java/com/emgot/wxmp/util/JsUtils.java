@@ -1,5 +1,7 @@
 package com.emgot.wxmp.util;
 
+import cn.hutool.core.util.HexUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.log.StaticLog;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.http.HttpResponse;
@@ -23,6 +25,7 @@ public class JsUtils {
     private static final String appsecret = "e7d190b98f5cd8d12e6d6c956256644f";
 
     public static Map sign(String url) {
+        // https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/access-token/auth.getAccessToken.html
         if (accessToken == null) {
             String sendUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + appid + "&secret=" + appsecret;
             String result = getHttpResult(sendUrl);
@@ -30,6 +33,8 @@ public class JsUtils {
             accessToken = tokenJson.get("access_token").toString();
             StaticLog.info("toke={}", accessToken);
         }
+
+        // https://developers.weixin.qq.com/doc/offiaccount/WeChat_Invoice/E_Invoice/Vendor_API_List.html
         if (ticket == null) {
             String signUrl = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=" + accessToken + "&type=jsapi";
             String resultSign = getHttpResult(signUrl);
@@ -39,18 +44,14 @@ public class JsUtils {
         Map<String, Object> ret = new HashMap();
         String nonce_str = create_nonce_str();
         String timestamp = create_timestamp();
-        String string1;
         String signature = "";
         //注意这里参数名必须全部小写，且必须有序
-        string1 = "jsapi_ticket=" + ticket +
-                "&noncestr=" + nonce_str +
-                "&timestamp=" + timestamp +
-                "&url=" + url;
+        String source = StrUtil.format("jsapi_ticket={}&noncestr={}&timestamp={}&url={}", ticket, nonce_str, timestamp, url);
         try {
             MessageDigest crypt = MessageDigest.getInstance("SHA-1");
             crypt.reset();
-            crypt.update(string1.getBytes("UTF-8"));
-            signature = byteToHex(crypt.digest());
+            crypt.update(source.getBytes("UTF-8"));
+            signature = HexUtil.encodeHexStr(crypt.digest(), true);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
@@ -58,27 +59,11 @@ public class JsUtils {
         }
         ret.put("url", url);
         ret.put("nonceStr", nonce_str);
-        ret.put("timestamp", Integer.parseInt(timestamp));
+        ret.put("timestamp", Long.parseLong(timestamp));
         ret.put("signature", signature);
         ret.put("jsapi_ticket", ticket);
         ret.put("appId", appid);
         return ret;
-    }
-
-    /**
-     * 随机加密
-     *
-     * @param hash
-     * @return
-     */
-    private static String byteToHex(final byte[] hash) {
-        Formatter formatter = new Formatter();
-        for (byte b : hash) {
-            formatter.format("%02x", b);
-        }
-        String result = formatter.toString();
-        formatter.close();
-        return result;
     }
 
     /**
